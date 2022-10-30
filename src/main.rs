@@ -17,8 +17,16 @@ fn not_found() -> Value {
     })
 }
 
+#[catch(500)]
+fn server_error() -> Value {
+    json!({
+        "status": "Server error",
+        "reason": "Something went wrong. Please try again later"
+    })
+}
+
 #[launch]
 fn rocket() -> _ {
     rocket::build().mount("/", routes![index, get_users, create_role])
-    .register("/", catchers![not_found])
+    .register("/", catchers![not_found, server_error])
 }
