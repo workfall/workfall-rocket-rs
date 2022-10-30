@@ -1,11 +1,9 @@
-use rocket::serde::json::{Json};
-
-use crate::services::index::T;
+use rocket::serde::json::{Value};
 
 // import services module
 use crate::services;
 
 #[get("/")]
-pub fn index() -> Json<T> {
+pub fn index() -> Value {
     services::index::home()
 }
