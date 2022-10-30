@@ -1,5 +1,5 @@
 use rocket::serde::json::{Value, Json};
-use elonaire_backend_rs::{models::models::{UserInputRole}};
+use elonaire_backend_rs::{models::models::{UserInputRole, UserInputUser}};
 
 // import services module
 use crate::services;
@@ -11,8 +11,10 @@ pub fn get_users() -> Value {
 
 #[post("/users/add-role", format = "json", data = "<role_info>")]
 pub fn create_role(role_info: Json<UserInputRole>) -> Value {
-    let id = uuid::Uuid::new_v4().to_string();
-    let role_name = &role_info.role_name;
+    services::users::add_role(&role_info.role_name)
+}
 
-    services::users::add_role(&id, &role_name)
+#[post("/users/create-user", format = "json", data = "<user_info>")]
+pub fn create_user(user_info: Json<UserInputUser>) -> Value {
+    services::users::create_user(&user_info)
 }

@@ -7,7 +7,7 @@ mod services;
 
 // import routes here
 use routes::index::index;
-use routes::users::{get_users, create_role};
+use routes::users::{get_users, create_role, create_user};
 
 #[catch(404)]
 fn not_found() -> Value {
@@ -27,6 +27,6 @@ fn server_error() -> Value {
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/", routes![index, get_users, create_role])
+    rocket::build().mount("/", routes![index, get_users, create_role, create_user])
     .register("/", catchers![not_found, server_error])
 }
