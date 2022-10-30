@@ -7,7 +7,7 @@ pub fn get_users() -> Value {
 
     let connection = &mut establish_connection();
 
-    let results = users
+    let results: Vec<User> = users
         .load::<User>(connection)
         .expect("Error loading posts");
 
@@ -19,9 +19,9 @@ pub fn add_role(id: &str, role_name: &str) -> Value {
 
     let connection = &mut establish_connection();
 
-    let new_role = NewRole {id, role_name};
+    let new_role: NewRole = NewRole {id, role_name};
 
-    let created_role = diesel::insert_into(roles::table)
+    let created_role: Role = diesel::insert_into(roles::table)
         .values(&new_role)
         .get_result::<Role>(connection)
         .expect("Error saving new role");
