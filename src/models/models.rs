@@ -41,7 +41,7 @@ pub struct UserInputUser {
 }
 
 /*
-* Role models begin from here
+* Role models (no pun intended) begin from here
 */
 
 #[derive(Queryable, Serialize, Deserialize)]

@@ -18,3 +18,8 @@ pub fn create_role(role_info: Json<UserInputRole>) -> Value {
 pub fn create_user(user_info: Json<UserInputUser>) -> Value {
     services::users::create_user(&user_info)
 }
+
+#[patch("/users/update", format = "json", data = "<user_info>")]
+pub fn update_user(user_info: Json<UserInputUser>) -> Value {
+    services::users::update_user(&user_info)
+}
