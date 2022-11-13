@@ -1,5 +1,5 @@
 use rocket::serde::json::{Value, Json};
-use elonaire_backend_rs::{models::models::{UserInputRole, UserInputUser}};
+use elonaire_backend_rs::{models::models::{UserInputRole, UserInputUser, UserInputUpdateUser}};
 
 // import services module
 use crate::services;
@@ -19,7 +19,7 @@ pub fn create_user(user_info: Json<UserInputUser>) -> Value {
     services::users::create_user(&user_info)
 }
 
-#[patch("/users/update", format = "json", data = "<user_info>")]
-pub fn update_user(user_info: Json<UserInputUser>) -> Value {
+#[put("/users/update", format = "json", data = "<user_info>")]
+pub fn update_user(user_info: Json<UserInputUpdateUser>) -> Value {
     services::users::update_user(&user_info)
 }

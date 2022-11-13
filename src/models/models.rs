@@ -18,7 +18,7 @@ pub struct User {
     pub password: String,
 }
 
-#[derive(Insertable, Serialize)]
+#[derive(Insertable, Serialize, AsChangeset)]
 #[diesel(table_name = users)]
 pub struct NewUser<'a> {
     pub id: &'a str,
@@ -38,6 +38,16 @@ pub struct UserInputUser {
     pub email: String,
     pub role_id: Option<String>,
     pub password: String,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct UserInputUpdateUser {
+    pub first_name: Option<String>,
+    pub middle_name: Option<String>,
+    pub last_name: Option<String>,
+    pub email: Option<String>,
+    pub role_id: Option<String>,
+    pub password: Option<String>,
 }
 
 /*
@@ -61,5 +71,3 @@ pub struct NewRole<'a> {
 pub struct UserInputRole {
     pub role_name: String,
 }
-
-
