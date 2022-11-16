@@ -1,5 +1,5 @@
 use rocket::serde::json::{Value, Json};
-use elonaire_backend_rs::{models::models::{UserInputRole, UserInputUser, UserInputUpdateUser}};
+use workfall_rocket_rs::{models::models::{UserInputRole, UserInputUser, UserInputUpdateUser}};
 
 // import services module
 use crate::services;

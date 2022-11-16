@@ -1,5 +1,5 @@
 use diesel::prelude::*;
-use elonaire_backend_rs::{
+use workfall_rocket_rs::{
     models::models::{NewRole, NewUser, Role, User, UserInputUser, UserInputUpdateUser},
     *,
 };
@@ -8,7 +8,7 @@ extern crate bcrypt;
 use bcrypt::{hash, DEFAULT_COST};
 
 pub fn get_users() -> Value {
-    use elonaire_backend_rs::schema::users::dsl::*;
+    use workfall_rocket_rs::schema::users::dsl::*;
 
     let connection = &mut establish_connection();
 
@@ -18,7 +18,7 @@ pub fn get_users() -> Value {
 }
 
 pub fn add_role(role_name: &str) -> Value {
-    use elonaire_backend_rs::schema::roles;
+    use workfall_rocket_rs::schema::roles;
 
     let id = uuid::Uuid::new_v4().to_string();
 
@@ -35,8 +35,8 @@ pub fn add_role(role_name: &str) -> Value {
 }
 
 pub fn create_user(user_details: &UserInputUser) -> Value {
-    use elonaire_backend_rs::schema::roles::dsl::*;
-    use elonaire_backend_rs::schema::users;
+    use workfall_rocket_rs::schema::roles::dsl::*;
+    use workfall_rocket_rs::schema::users;
 
     let connection = &mut establish_connection();
 
@@ -78,8 +78,8 @@ pub fn create_user(user_details: &UserInputUser) -> Value {
 * Update user details
 */
 pub fn update_user(user_details: &UserInputUpdateUser) -> Value {
-    // use elonaire_backend_rs::schema::users;
-    use elonaire_backend_rs::schema::users::dsl::*;
+    // use workfall_rocket_rs::schema::users;
+    use workfall_rocket_rs::schema::users::dsl::*;
 
     let connection = &mut establish_connection();
 
