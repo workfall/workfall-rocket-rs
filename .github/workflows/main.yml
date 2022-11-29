@@ -33,8 +33,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Build Rocket application
-        uses:
-      - run: cargo build --release
+        run: cargo build --release
 
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v3
