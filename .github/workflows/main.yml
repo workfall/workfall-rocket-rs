@@ -35,13 +35,13 @@ jobs:
       - name: Build Rocket application
         run: cargo build --release
 
-      - name: 'Upload Artifact'
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-step-output
-          path: |
-            /target/release/workfall-rocket-rs
-          retention-days: 1
+      # - name: 'Upload Artifact'
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: build-step-output
+      #     path: |
+      #       /target/release/workfall-rocket-rs
+      #     retention-days: 1
 
   deploy:
     runs-on: ubuntu-latest
@@ -55,10 +55,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Download build step artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: build-step-output
+      # - name: Download build step artifacts
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: build-step-output
 
       - name: Generate deployment package
         run: zip deploy.zip -r src Dockerfile Cargo.toml diesel.toml migrations
