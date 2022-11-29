@@ -11,6 +11,7 @@ dotenvy = "0.15"
 serde = { version = "1.0", features = ["derive"] }
 uuid = { version = "0.8.2", features = ["v4"] }
 bcrypt = "0.13.0"
+openssl = "*"
 
 [dependencies.rocket]
 version = "0.5.0-rc.2"
