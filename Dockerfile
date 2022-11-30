@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:latest as builder
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt update
@@ -20,13 +20,13 @@ COPY . .
 RUN cargo build --release
 RUN rm src/*.rs
 
-FROM ubuntu:latest
+FROM ubuntu:latest as runner
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt update
 RUN apt install -y libpq-dev
 ENV ROCKET_ADDRESS=0.0.0.0
 EXPOSE 8000
-COPY --from=0 /workfall-rocket-rs/target/release/workfall-rocket-rs /usr/local/bin/workfall-rocket-rs
+COPY --from=builder /workfall-rocket-rs/target/release/workfall-rocket-rs /usr/local/bin/workfall-rocket-rs
 WORKDIR /usr/local/bin
 CMD ["workfall-rocket-rs"]
