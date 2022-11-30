@@ -30,7 +30,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - uses: rust-build/rust-build.action@v1.4.0
 
       - name: Build Rocket application
         run: cargo build --release
@@ -61,7 +61,7 @@ jobs:
       #     name: build-step-output
 
       - name: Generate deployment package
-        run: zip deploy.zip -r src Dockerfile Cargo.toml diesel.toml migrations
+        run: zip deploy.zip -r src Dockerfile Cargo.toml diesel.toml migrations .dockerignore
 
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v20
