@@ -23,25 +23,29 @@ jobs:
       id-token: write # required to use OIDC authentication
       contents: read # required to checkout the code from the repo
     
-    # strategy:
-    #   matrix:
-    #     node-version: [14.x]
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [x86_64-unknown-linux-musl]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-
+        with:
+          RUSTTARGET: ${{ matrix.target }}
       - name: Build Rocket application
+        id: compile
         run: cargo build --release
 
-      # - name: 'Upload Artifact'
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: build-step-output
-      #     path: |
-      #       /target/release/workfall-rocket-rs
-      #     retention-days: 1
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-step-output
+          path: |
+            ${{ steps.compile.outputs.BUILT_ARCHIVE }}
+            ${{ steps.compile.outputs.BUILT_CHECKSUM }}
+          retention-days: 1
 
   deploy:
     runs-on: ubuntu-latest
@@ -55,13 +59,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # - name: Download build step artifacts
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: build-step-output
+      - name: Download build step artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-step-output
 
       - name: Generate deployment package
-        run: zip deploy.zip -r src Dockerfile Cargo.toml diesel.toml migrations .dockerignore
+        run: zip deploy.zip -r src Dockerfile Cargo.toml diesel.toml migrations .dockerignore target/x86_64-unknown-linux-musl/workfall-rocket-rs
 
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v20
