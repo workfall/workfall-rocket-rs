@@ -83,7 +83,7 @@ jobs:
 
         run: |
 
-        aws deploy create-deployment \
+        -aws deploy create-deployment \
 
         -application-name workfall-rs \
 
