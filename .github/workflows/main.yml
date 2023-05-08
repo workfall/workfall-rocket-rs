@@ -15,38 +15,34 @@ env:
   CARGO_TERM_COLOR: always
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+  # build:
+  #   # The type of runner that the job will run on
+  #   runs-on: ubuntu-latest
     
-    permissions:
-      id-token: write # required to use OIDC authentication
-      contents: read # required to checkout the code from the repo
     
-    # strategy:
-    #   matrix:
-    #     node-version: [14.x]
+  #   # Steps represent a sequence of tasks that will be executed as part of the job
+  #   steps:
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - uses: actions/checkout@v3
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-
-      - name: Build Rocket application
-        run: cargo build --release
-
-      # - name: 'Upload Artifact'
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: build-step-output
-      #     path: |
-      #       /target/release/workfall-rocket-rs
-      #     retention-days: 1
+  #     - name: Set up Rust
+  #     uses: actions-rs/toolchain@v1
+  #     with:
+  #       profile: minimal
+  #       toolchain: nightly
+  #       override: true
+  #     # - name: 'Upload Artifact'
+  #     #   uses: actions/upload-artifact@v3
+  #     #   with:
+  #     #     name: build-step-output
+  #     #     path: |
+  #     #       /target/release/workfall-rocket-rs
+  #     #     retention-days: 1
 
   deploy:
     runs-on: ubuntu-latest
 
-    needs: [build]
+    # needs: [build]
 
     permissions:
       id-token: write # required to use OIDC authentication
@@ -55,23 +51,42 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # - name: Download build step artifacts
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: build-step-output
+      - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
 
-      - name: Generate deployment package
-        run: zip deploy.zip -r src Dockerfile Cargo.toml diesel.toml migrations .dockerignore
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v20
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: rust-rocket-app
-          environment_name: Rustrocketapp-env
-          version_label: ${{ github.sha }}
-          region: us-east-1
-          deployment_package: deploy.zip
-          use_existing_version_if_available: true
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: elonaire/workfall-rocket-rs:latest
+
+    # - name: SCP files to server
+    #   uses: appleboy/scp-action@v0.1.4
+    #   with:
+    #     host: ${{ secrets.SERVER_HOST }}
+    #     username: ${{ secrets.SERVER_USERNAME }}
+    #     password: ${{ secrets.SERVER_PASSWORD }}
+    #     source: "nginx/,docker-compose.yml"
+    #     target: ~/
+
+    - name: Deploy to server via SSH
+      uses: appleboy/ssh-action@v0.1.4
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+        # password: ${{ secrets.SERVER_PASSWORD }}
+        script: |
+          CI=true docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          CI=true docker stop elonaire/workfall-rocket-rs:latest
+          CI=true docker image prune -a
+          CI=true docker pull elonaire/workfall-rocket-rs:latest
+          CI=true docker run -d -p 80:80 elonaire/workfall-rocket-rs:latest
 
