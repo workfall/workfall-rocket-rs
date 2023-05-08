@@ -54,39 +54,39 @@ jobs:
       - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_HUB_USERNAME }}
-        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        push: true
-        tags: elonaire/workfall-rocket-rs:latest
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: elonaire/workfall-rocket-rs:latest
 
-    # - name: SCP files to server
-    #   uses: appleboy/scp-action@v0.1.4
-    #   with:
-    #     host: ${{ secrets.SERVER_HOST }}
-    #     username: ${{ secrets.SERVER_USERNAME }}
-    #     password: ${{ secrets.SERVER_PASSWORD }}
-    #     source: "nginx/,docker-compose.yml"
-    #     target: ~/
+      # - name: SCP files to server
+      #   uses: appleboy/scp-action@v0.1.4
+      #   with:
+      #     host: ${{ secrets.SERVER_HOST }}
+      #     username: ${{ secrets.SERVER_USERNAME }}
+      #     password: ${{ secrets.SERVER_PASSWORD }}
+      #     source: "nginx/,docker-compose.yml"
+      #     target: ~/
 
-    - name: Deploy to server via SSH
-      uses: appleboy/ssh-action@v0.1.4
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USERNAME }}
-        key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
-        # password: ${{ secrets.SERVER_PASSWORD }}
-        script: |
-          CI=true docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-          CI=true docker stop elonaire/workfall-rocket-rs:latest
-          CI=true docker image prune -a
-          CI=true docker pull elonaire/workfall-rocket-rs:latest
-          CI=true docker run -d -p 80:80 elonaire/workfall-rocket-rs:latest
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+          # password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            CI=true docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+            CI=true docker stop elonaire/workfall-rocket-rs:latest
+            CI=true docker image prune -a
+            CI=true docker pull elonaire/workfall-rocket-rs:latest
+            CI=true docker run -d -p 80:80 elonaire/workfall-rocket-rs:latest
 
