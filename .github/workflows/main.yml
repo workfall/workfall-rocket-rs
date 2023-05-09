@@ -64,5 +64,5 @@ jobs:
             CI=true docker stop workfall-rocket-rs
             CI=true docker image prune -a
             CI=true docker pull elonaire/workfall-rocket-rs:latest
-            CI=true docker run -d -p 80:8000 elonaire/workfall-rocket-rs:latest --name=workfall-rocket-rs
+            CI=true docker run --name=workfall-rocket-rs -d -p 80:8000 elonaire/workfall-rocket-rs:latest
 
