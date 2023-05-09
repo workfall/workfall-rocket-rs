@@ -61,8 +61,8 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             CI=true docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-            CI=true docker stop elonaire/workfall-rocket-rs:latest
+            CI=true docker stop workfall-rocket-rs
             CI=true docker image prune -a
             CI=true docker pull elonaire/workfall-rocket-rs:latest
-            CI=true docker run -d -p 80:8000 elonaire/workfall-rocket-rs:latest
+            CI=true docker run -d -p 80:8000 elonaire/workfall-rocket-rs:latest --name=workfall-rocket-rs
 
